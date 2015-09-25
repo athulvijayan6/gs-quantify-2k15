@@ -3,14 +3,12 @@
 # @Author: Athul Vijayan
 # @Date:   2015-09-25 15:12:37
 # @Last Modified by:   Athul Vijayan
-# @Last Modified time: 2015-09-25 19:07:59
+# @Last Modified time: 2015-09-25 23:36:51
 import csv
 import pandas as pd
 import numpy as np
 import re
 import scipy.io
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
 
 months = {'jan':0, 'feb':1, 'mar':2, 'apr':3, 'may':4, 'jun':5, 'jul':6, 'aug':7, 'sep':8, 'oct':9, 'nov':10, 'dec':11}
 trainDataFile = 'data/Initial_Training_Data.csv'
@@ -29,7 +27,8 @@ for i in xrange(len(DataPd)):
             if pd.isnull(item):
                 temp[f] = item
             else:
-                if f not in [4, 6, 7, 8, 9, 10, 12, 13, 14]:
+                # [0, 1, 2, 3, 5, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19]
+                if f not in [4, 6, 7, 8, 12]:
                     # extract number
                     point = int(re.search('[0-9]+', item).group(0))
                     temp[f] = point
@@ -53,12 +52,20 @@ for i in xrange(len(DataPd)):
                         month = months[re.search('[a-z]+', item.lower()).group(0)]
                     except:
                         raise ValueError('Month data bad')
-                    temp[f:f+3] = [day, month, year]
+                    temp[f] = year
+                    if f == 8:
+                        temp[DataPd[i].shape[1]] = month
+                        temp[DataPd[i].shape[1]+1] = day
+                    else:
+                        temp[DataPd[i].shape[1]+2] = month
+                        temp[DataPd[i].shape[1]+3] = day
         data[i] = np.vstack((data[i], temp))
     data[i] = data[i][1:]
 trainData = data[0]
 testData = data[1]
-scipy.io.savemat('DataFile', {'trainData':trainData, 'testData':testData})
+np.save('data/Initial_Training_Data', trainData)
+np.save('data/Initial_Test_Data', testData)
+scipy.io.savemat('data/DataFile', {'trainData':trainData, 'testData':testData})
 
 
 
