@@ -3,7 +3,7 @@
 # @Author: Athul
 # @Date:   2015-09-26 02:16:55
 # @Last Modified by:   Athul
-# @Last Modified time: 2015-09-26 06:29:07
+# @Last Modified time: 2015-09-26 14:53:09
 from __future__ import division
 import pandas as pd
 import numpy as np
@@ -20,14 +20,29 @@ trainData = trainData[:int(trainData.shape[0]*0.8),:]
 # testData = np.load('../data/Initial_Test_Data.npy')
 truth = trainData[:, 19].astype(int)
 
-# No need to remove NaNs
+# Remove NaNs
+col_mean = scipy.stats.nanmean(trainData, axis=0)
+ids = np.where(np.isnan(trainData))
+trainData[ids] = np.take(col_mean, ids[1]) 
+
+col_mean = scipy.stats.nanmean(testData, axis=0)
+ids = np.where(np.isnan(testData))
+testData[ids] = np.take(col_mean, ids[1])
+
 trainFeatures = np.hstack((trainData[:, 1:19], trainData[:, 20:]))
 testFeatures = np.hstack((testData[:, 1:19], testData[:, 20:]))
 
+# ============================== Do PCA   ========================
+pca = PCA(n_components='mle')
+pca.fit(trainFeatures)
+trainFeatures = pca.transform(trainFeatures)
+testFeatures = pca.transform(testFeatures)
+
+
 # libsvm filenames
-svm_train_data = 'results/svm_train_data'
-svm_test_data = 'results/svm_test_data'
-modelfile = 'results/svm_model_data_01.model'
+svm_train_data = 'results/svm_train_data_pca'
+svm_test_data = 'results/svm_test_data_pca'
+modelfile = 'results/svm_model_data_01.model_pca'
 resultFile = 'results/iter_01'
 with open(svm_train_data, 'w') as f:
     for i in xrange(trainFeatures.shape[0]):
