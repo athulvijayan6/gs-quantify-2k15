@@ -3,7 +3,7 @@
 # @Author: Athul
 # @Date:   2015-09-26 02:16:55
 # @Last Modified by:   Athul
-# @Last Modified time: 2015-09-28 13:58:13
+# @Last Modified time: 2015-09-28 15:45:27
 from __future__ import division
 import pandas as pd
 import numpy as np
@@ -75,7 +75,7 @@ t = 2
 d = 2
 g = 0.0625
 r = 0
-c = 1
+c = 2
 b = 0
 v = 5
 command = './libsvm/svm-train {8} {9} -s {0} -t {1} -d {2} -g {3} -r {4} -c {5} -b {6} -v {7}'
